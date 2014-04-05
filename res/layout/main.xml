@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="332dp"
         android:layout_weight="0.78" >
+        
+        <requestFocus />
     </ListView>
 
     <Button
@@ -27,7 +29,6 @@
         android:imeOptions="actionSend"
         android:ems="10" >
 
-        <requestFocus />
     </EditText>
 
 </LinearLayout>

@@ -1,6 +1,10 @@
 package com.parse.starter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.location.Location;
@@ -9,6 +13,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
@@ -26,7 +32,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	private Location mLocation;
 	private LocationClient mLocationClient;
 	private LocationRequest mLocationRequest;
-	
+	private ListView lv;
+	private List<Map<String, String>> chatterList = new ArrayList<Map<String,String>>();
+	private SimpleAdapter simpleAdpt;
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,6 +46,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		// Set the update interval to 5 seconds
 		mLocationRequest.setInterval(5000);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		lv = (ListView) findViewById(R.id.list);
 		editText = (EditText) findViewById(R.id.buzzText);
 		editText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
@@ -54,11 +63,22 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
 		});
 	}
+	private HashMap<String, String> createBuzz(String key, String name) {
+		    HashMap<String, String> buzz = new HashMap<String, String>();
+		    buzz.put(key, name);
+		    return buzz;
+		}
+
+	private void initList() {
+		Location loc = getCurrentLoc();
+		Message buzz = new Message("Hi. Welcome to BuzzLocal",loc);
+		chatterList.add(createBuzz("buzz",buzz.getBuzz()));
+	}
 	@Override
 	protected void onStart() {
 		super.onStart();
 		mLocationClient.connect();
-		
+
 	}
 
 	@Override
@@ -103,8 +123,8 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 				Toast.LENGTH_SHORT).show();
 	}
 	public void onclickButton1(View v){
-		Location loc = getCurrentLoc();
-		Message buzz = new Message("trying",loc);
-		buzz.sendMessage();
+		initList();
+		simpleAdpt = new SimpleAdapter(this, chatterList, android.R.layout.simple_list_item_1, new String[] {"buzz"}, new int[] {android.R.id.text1});
+		lv.setAdapter(simpleAdpt);
 	}
 }

@@ -6,9 +6,9 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
 public class Message {
-	ParseObject thisMessage;
-	ParseGeoPoint buzzLoc;
-	String buzz;
+	private ParseObject thisMessage;
+	private ParseGeoPoint buzzLoc;
+	private String buzz;
 	public Message(String text,Location loc){
 		this.buzzLoc = new ParseGeoPoint(loc.getLatitude(),loc.getLongitude());
 		this.buzz = text;
@@ -19,5 +19,9 @@ public class Message {
 	
 	public void sendMessage(){
 		thisMessage.saveInBackground();
+	}
+	
+	public String getBuzz(){
+		return this.buzz;
 	}
 }
