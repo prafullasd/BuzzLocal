@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -24,7 +25,12 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.parse.FindCallback;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 public class ParseStarterProjectActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
@@ -73,6 +79,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		Location loc = getCurrentLoc();
 		Message buzz = new Message("Hi. Welcome to BuzzLocal",loc);
 		chatterList.add(createBuzz("buzz",buzz.getBuzz()));
+		chatterList.add(createBuzz("buzz",buzz.getBuzz()));
 	}
 	@Override
 	protected void onStart() {
@@ -88,6 +95,10 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	}
 	private Location getCurrentLoc() {
 		return mLocationClient.getLastLocation();
+	}
+	private ParseGeoPoint getParseCurrentLoc() {
+		Location parsetemplocation = mLocationClient.getLastLocation();
+		return new ParseGeoPoint(parsetemplocation.getLatitude(),parsetemplocation.getLongitude());
 	}
 
 	@Override
@@ -122,9 +133,32 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		Toast.makeText(this, "Disconnected. Please re-connect.",
 				Toast.LENGTH_SHORT).show();
 	}
-	public void onclickButton1(View v){
+	public void onclickButton1(final View v) throws ParseException{
 		initList();
 		simpleAdpt = new SimpleAdapter(this, chatterList, android.R.layout.simple_list_item_1, new String[] {"buzz"}, new int[] {android.R.id.text1});
 		lv.setAdapter(simpleAdpt);
+		ParseGeoPoint userLocation = getParseCurrentLoc();
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
+		query.whereNear("buzzLoc", userLocation);
+		query.setLimit(10);
+		query.findInBackground(new FindCallback<ParseObject>() {
+		     public void done(List<ParseObject> objects, ParseException e) {
+		         if (e == null) {
+		        	 Toast.makeText(v.getContext(), "Successful retrieval",
+			     				Toast.LENGTH_SHORT).show();
+		        	 lv.setAdapter(createAdapterfromQuery(objects));
+		         } else {
+			        	Toast.makeText(v.getContext(), "Unsuccessful retrieval",
+			     				Toast.LENGTH_SHORT).show();
+		         }
+		     }
+		 });
+	}
+	private ListAdapter createAdapterfromQuery(List<ParseObject> objects) {
+		List<Map<String, String>> queryList = new ArrayList<Map<String,String>>();
+		for(ParseObject obj:objects){
+			queryList.add(createBuzz("buzz", obj.getString("buzz")));
+		}
+		return new SimpleAdapter(this, queryList, android.R.layout.simple_list_item_1, new String[] {"buzz"}, new int[] {android.R.id.text1});
 	}
 }
