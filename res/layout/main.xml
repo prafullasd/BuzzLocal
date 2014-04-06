@@ -10,7 +10,7 @@
         android:layout_height="332dp"
         android:layout_weight="0.78" >
         
-        <requestFocus />
+
     </ListView>
 
     <Button
@@ -18,8 +18,9 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="168dp"
         android:layout_height="46dp"
-        android:text="Button" 
-        android:onClick="onclickButton1"/>
+        android:layout_gravity="center"
+        android:onClick="onclickButton1"
+        android:text="@string/button1text" />
 
     <EditText
         android:id="@+id/buzzText"
@@ -27,7 +28,8 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:imeOptions="actionSend"
-        android:ems="10" >
+        android:ems="10" 
+        android:text="@string/intialHint">
 
     </EditText>
 

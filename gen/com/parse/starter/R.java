@@ -179,6 +179,17 @@ containing a value of this type.
         public static final int common_signin_btn_text_dark=0x7f04000a;
         public static final int common_signin_btn_text_light=0x7f04000b;
     }
+    public static final class dimen {
+        /**  Default screen margins, per the Android Design guidelines. 
+
+         Example customization of dimensions originally defined in res/values/dimens.xml
+         (such as screen margins) for screens with more than 820dp of available width. This
+         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
+    
+         */
+        public static final int activity_horizontal_margin=0x7f080000;
+        public static final int activity_vertical_margin=0x7f080001;
+    }
     public static final class drawable {
         public static final int common_signin_btn_icon_dark=0x7f020000;
         public static final int common_signin_btn_icon_disabled_dark=0x7f020001;
@@ -212,22 +223,35 @@ containing a value of this type.
         public static final int main=0x7f02001d;
     }
     public static final class id {
-        public static final int button1=0x7f050006;
+        public static final int action_settings=0x7f05000d;
+        public static final int button1=0x7f05000c;
         public static final int buzzText=0x7f050007;
+        public static final int container=0x7f050005;
+        public static final int date=0x7f05000a;
+        public static final int divider=0x7f050008;
+        public static final int gap=0x7f050009;
         public static final int hybrid=0x7f050004;
-        public static final int list=0x7f050005;
+        public static final int list=0x7f05000b;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
+        public static final int textView1=0x7f050006;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
+        public static final int activity_display_buzz=0x7f030000;
+        public static final int buzzrow=0x7f030001;
+        public static final int fragment_display_buzz=0x7f030002;
+        public static final int main=0x7f030003;
+    }
+    public static final class menu {
+        public static final int display_buzz=0x7f090000;
     }
     public static final class string {
+        public static final int action_settings=0x7f06001f;
         public static final int app_name=0x7f06001c;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -252,6 +276,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060014;
+        public static final int button1text=0x7f060021;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -324,9 +349,12 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f060013;
         public static final int hello=0x7f06001b;
+        public static final int hello_world=0x7f06001e;
+        public static final int intialHint=0x7f060020;
         /**  Location client code resources (prefix with location_client) 
          */
         public static final int location_client_powered_by_google=0x7f06001a;
+        public static final int title_activity_display_buzz=0x7f06001d;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.

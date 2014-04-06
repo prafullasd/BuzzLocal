@@ -1,17 +1,23 @@
 package com.parse.starter;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -41,6 +47,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	private ListView lv;
 	private List<Map<String, String>> chatterList = new ArrayList<Map<String,String>>();
 	private SimpleAdapter simpleAdpt;
+	private SimpleAdapter currentAdpt;
+	public Map<String, String> passedBuzz;
+	public String passedBuzzid;
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,14 +69,29 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 				boolean handled = false;
 				if (actionId == EditorInfo.IME_ACTION_SEND) {
 					Location loc = getCurrentLoc();
-					Message buzz = new Message(v.getText().toString(),loc);
+					Message buzz = new Message(v.getText().toString(),loc, Calendar.getInstance().getTime());
 					buzz.sendMessage();
+					v.setText("So whats buzzing around you?");
+					v.clearFocus();
 					handled = true;
 				}
 				return handled;
 			}
 
 		});
+		lv.setOnItemClickListener(new OnItemClickListener() {
+		     @SuppressWarnings("unchecked")
+			public void onItemClick(AdapterView<?> parent, View view,
+		         int position, long id) {
+
+		         // When clicked, Open the Next Screen
+		    	 Intent intent = new Intent(view.getContext(), DisplayBuzzActivity.class);
+		    	 passedBuzz = (Map<String, String>) lv.getAdapter().getItem(position);
+		    	 passedBuzzid = passedBuzz.get("buzzId");
+		    	 intent.putExtra("com.parse.starter.passedBuzzid", passedBuzzid);
+		         startActivityForResult(intent, position);
+		         }
+		     });
 	}
 	private HashMap<String, String> createBuzz(String key, String name) {
 		    HashMap<String, String> buzz = new HashMap<String, String>();
@@ -77,7 +101,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
 	private void initList() {
 		Location loc = getCurrentLoc();
-		Message buzz = new Message("Hi. Welcome to BuzzLocal",loc);
+		Message buzz = new Message("Hi. Welcome to BuzzLocal",loc, new Date());
 		chatterList.add(createBuzz("buzz",buzz.getBuzz()));
 		chatterList.add(createBuzz("buzz",buzz.getBuzz()));
 	}
@@ -135,18 +159,24 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	}
 	public void onclickButton1(final View v) throws ParseException{
 		initList();
-		simpleAdpt = new SimpleAdapter(this, chatterList, android.R.layout.simple_list_item_1, new String[] {"buzz"}, new int[] {android.R.id.text1});
+		simpleAdpt = new SimpleAdapter(this, chatterList, R.layout.buzzrow, new String[] {"buzz"}, new int[] {android.R.id.text1});
 		lv.setAdapter(simpleAdpt);
 		ParseGeoPoint userLocation = getParseCurrentLoc();
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
 		query.whereNear("buzzLoc", userLocation);
+		Calendar rightNow = Calendar.getInstance();
+		rightNow.add(Calendar.DAY_OF_MONTH, -7);
+		query.whereGreaterThan("buzzTime", rightNow.getTime());
+		query.orderByDescending("buzzTime");
+		query.orderByDescending("upvotes");
 		query.setLimit(10);
 		query.findInBackground(new FindCallback<ParseObject>() {
 		     public void done(List<ParseObject> objects, ParseException e) {
 		         if (e == null) {
 		        	 Toast.makeText(v.getContext(), "Successful retrieval",
 			     				Toast.LENGTH_SHORT).show();
-		        	 lv.setAdapter(createAdapterfromQuery(objects));
+		        	 currentAdpt = (SimpleAdapter) createAdapterfromQuery(objects);
+		        	 lv.setAdapter(currentAdpt);
 		         } else {
 			        	Toast.makeText(v.getContext(), "Unsuccessful retrieval",
 			     				Toast.LENGTH_SHORT).show();
@@ -157,8 +187,13 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	private ListAdapter createAdapterfromQuery(List<ParseObject> objects) {
 		List<Map<String, String>> queryList = new ArrayList<Map<String,String>>();
 		for(ParseObject obj:objects){
-			queryList.add(createBuzz("buzz", obj.getString("buzz")));
+			HashMap<String, String> buzz = new HashMap<String, String>();
+		    buzz.put("buzz", obj.getString("buzz"));
+		    DateFormat df = DateFormat.getDateTimeInstance();
+		    buzz.put("buzztime", df.format(obj.getDate("buzzTime")));
+		    buzz.put("buzzId", obj.getObjectId());
+			queryList.add(buzz);
 		}
-		return new SimpleAdapter(this, queryList, android.R.layout.simple_list_item_1, new String[] {"buzz"}, new int[] {android.R.id.text1});
+		return new SimpleAdapter(this, queryList, R.layout.buzzrow, new String[] {"buzz","buzztime"}, new int[] {R.id.buzzText,R.id.date});
 	}
 }
