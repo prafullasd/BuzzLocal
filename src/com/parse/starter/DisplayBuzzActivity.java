@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Build;
 
@@ -22,12 +23,14 @@ public class DisplayBuzzActivity extends Activity {
 	Intent previousIntent;
 	String passedBuzzid;
 	ParseObject thisBuzz;
+	private TextView tv;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_buzz);
 		previousIntent = getIntent();
 		
+		tv = (TextView) findViewById(R.id.textView1);	
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
@@ -82,11 +85,13 @@ public class DisplayBuzzActivity extends Activity {
 		public void done(ParseObject object, ParseException e) {
 			if (e == null) {
 			      thisBuzz = object;
+			      tv.setText(thisBuzz.getString("buzz"));
 			    } else {
 			    	Toast.makeText(getBaseContext(),"Oops", Toast.LENGTH_SHORT).show();
 			    }
 			
 		}
 		});
+
 	}
 }

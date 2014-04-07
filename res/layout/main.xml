@@ -29,7 +29,7 @@
         android:inputType="text"
         android:imeOptions="actionSend"
         android:ems="10" 
-        android:text="@string/intialHint">
+        android:hint="@string/intialHint">
 
     </EditText>
 

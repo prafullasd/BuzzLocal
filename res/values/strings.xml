@@ -8,5 +8,8 @@
     <string name="action_settings">Settings</string>
     <string name="intialHint">Type your buzz here.</string>
     <string name="button1text">Whats buzzing?</string>
+    <string name="title_activity_map_pane">MapPane</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

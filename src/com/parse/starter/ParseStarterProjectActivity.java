@@ -71,10 +71,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 					Location loc = getCurrentLoc();
 					Message buzz = new Message(v.getText().toString(),loc, Calendar.getInstance().getTime());
 					buzz.sendMessage();
-					v.setText("So whats buzzing around you?");
+					v.setText("");
 					v.clearFocus();
 					handled = true;
 				}
+				
 				return handled;
 			}
 
@@ -129,9 +130,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	public void onLocationChanged(Location location) {
 		if(location!=null){
 			mLocation = location;
-			Toast.makeText(this, "Updated Location: " +
-					Double.toString(location.getLatitude()) + "," +
-					Double.toString(location.getLongitude())+ " and accuracy is "+location.getAccuracy(), Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "Updated Location: " +
+//					Double.toString(location.getLatitude()) + "," +
+//					Double.toString(location.getLongitude())+ " and accuracy is "+location.getAccuracy(), Toast.LENGTH_SHORT).show();
 		}
 		else {
 			Toast.makeText(this, "Trying", Toast.LENGTH_SHORT).show();
@@ -158,9 +159,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 				Toast.LENGTH_SHORT).show();
 	}
 	public void onclickButton1(final View v) throws ParseException{
-		initList();
-		simpleAdpt = new SimpleAdapter(this, chatterList, R.layout.buzzrow, new String[] {"buzz"}, new int[] {android.R.id.text1});
-		lv.setAdapter(simpleAdpt);
+//		initList();
+//		simpleAdpt = new SimpleAdapter(this, chatterList, R.layout.buzzrow, new String[] {"buzz"}, new int[] {android.R.id.text1});
+//		lv.setAdapter(simpleAdpt);
 		ParseGeoPoint userLocation = getParseCurrentLoc();
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
 		query.whereNear("buzzLoc", userLocation);
@@ -192,8 +193,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		    DateFormat df = DateFormat.getDateTimeInstance();
 		    buzz.put("buzztime", df.format(obj.getDate("buzzTime")));
 		    buzz.put("buzzId", obj.getObjectId());
+		    buzz.put("upvotes", ""+ obj.getInt("upvotes"));
 			queryList.add(buzz);
 		}
-		return new SimpleAdapter(this, queryList, R.layout.buzzrow, new String[] {"buzz","buzztime"}, new int[] {R.id.buzzText,R.id.date});
+		return new SimpleAdapter(this, queryList, R.layout.buzzrow, new String[] {"buzz","buzztime","upvotes"}, new int[] {R.id.buzzText,R.id.date,R.id.upvotes});
 	}
 }

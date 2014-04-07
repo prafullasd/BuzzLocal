@@ -37,6 +37,12 @@
             android:name="com.parse.starter.DisplayBuzzActivity"
             android:label="@string/title_activity_display_buzz" >
         </activity>
+        <activity
+            android:name="com.parse.starter.MapPane"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_map_pane"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>
