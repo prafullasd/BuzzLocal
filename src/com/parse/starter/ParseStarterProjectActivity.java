@@ -99,7 +99,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		    buzz.put(key, name);
 		    return buzz;
 		}
-
+	
+//	 protected void onActivityResult(int requestCode){
+//		update();
+//	}
+	
 	private void initList() {
 		Location loc = getCurrentLoc();
 		Message buzz = new Message("Hi. Welcome to BuzzLocal",loc, new Date());
@@ -112,7 +116,31 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		mLocationClient.connect();
 
 	}
-
+	
+	private void update(){
+		ParseGeoPoint userLocation = getParseCurrentLoc();
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
+		query.whereWithinKilometers("buzzLoc", userLocation, 0.04);
+		Calendar rightNow = Calendar.getInstance();
+		rightNow.add(Calendar.DAY_OF_MONTH, -7);
+		query.whereGreaterThan("buzzTime", rightNow.getTime());
+		query.orderByDescending("buzzTime");
+		query.orderByDescending("upvotes");
+		query.setLimit(10);
+		query.findInBackground(new FindCallback<ParseObject>() {
+		     public void done(List<ParseObject> objects, ParseException e) {
+		         if (e == null) {
+//		        	 Toast.makeText(getBaseContext(), "Successful retrieval",
+//			     				Toast.LENGTH_SHORT).show();
+		        	 currentAdpt = (SimpleAdapter) createAdapterfromQuery(objects);
+		        	 lv.setAdapter(currentAdpt);
+		         } else {
+			        	Toast.makeText(getBaseContext(), "Unsuccessful retrieval",
+			     				Toast.LENGTH_SHORT).show();
+		         }
+		     }
+		 });	
+	}
 	@Override
 	protected void onStop() {
 		mLocationClient.disconnect();
@@ -130,6 +158,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	public void onLocationChanged(Location location) {
 		if(location!=null){
 			mLocation = location;
+			update();
 //			Toast.makeText(this, "Updated Location: " +
 //					Double.toString(location.getLatitude()) + "," +
 //					Double.toString(location.getLongitude())+ " and accuracy is "+location.getAccuracy(), Toast.LENGTH_SHORT).show();
@@ -150,6 +179,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 		// Display the connection status
 		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+		update();
 	}
 
 	@Override
@@ -162,28 +192,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 //		initList();
 //		simpleAdpt = new SimpleAdapter(this, chatterList, R.layout.buzzrow, new String[] {"buzz"}, new int[] {android.R.id.text1});
 //		lv.setAdapter(simpleAdpt);
-		ParseGeoPoint userLocation = getParseCurrentLoc();
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
-		query.whereNear("buzzLoc", userLocation);
-		Calendar rightNow = Calendar.getInstance();
-		rightNow.add(Calendar.DAY_OF_MONTH, -7);
-		query.whereGreaterThan("buzzTime", rightNow.getTime());
-		query.orderByDescending("buzzTime");
-		query.orderByDescending("upvotes");
-		query.setLimit(10);
-		query.findInBackground(new FindCallback<ParseObject>() {
-		     public void done(List<ParseObject> objects, ParseException e) {
-		         if (e == null) {
-		        	 Toast.makeText(v.getContext(), "Successful retrieval",
-			     				Toast.LENGTH_SHORT).show();
-		        	 currentAdpt = (SimpleAdapter) createAdapterfromQuery(objects);
-		        	 lv.setAdapter(currentAdpt);
-		         } else {
-			        	Toast.makeText(v.getContext(), "Unsuccessful retrieval",
-			     				Toast.LENGTH_SHORT).show();
-		         }
-		     }
-		 });
+		update();
 	}
 	private ListAdapter createAdapterfromQuery(List<ParseObject> objects) {
 		List<Map<String, String>> queryList = new ArrayList<Map<String,String>>();

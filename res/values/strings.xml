@@ -2,12 +2,12 @@
 <resources>
 
     <string name="hello">Hello World, ParseStarterProjectActivity!</string>
-    <string name="app_name">ParseStarterProject</string>
-    <string name="title_activity_display_buzz">DisplayBuzzActivity</string>
+    <string name="app_name">Buzz Local</string>
+    <string name="title_activity_display_buzz">The buzz</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="intialHint">Type your buzz here.</string>
-    <string name="button1text">Whats buzzing?</string>
+    <string name="button1text">What\'s buzzing?</string>
     <string name="title_activity_map_pane">MapPane</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
